@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_isar_db/blocs/courses/courses_bloc.dart';
+import 'package:flutter_isar_db/blocs/teachers/teachers_bloc.dart';
+import 'package:flutter_isar_db/db/entities/course.dart';
 import 'package:flutter_isar_db/presentation/widgets/widgets.dart';
 import 'package:flutter_isar_db/utils/utils.dart';
 import 'package:select_modal_flutter/select_modal_flutter.dart';
@@ -15,6 +19,7 @@ class NewCourseScreen extends StatefulWidget {
 class _NewCourseScreenState extends State<NewCourseScreen> {
   final _nameTextEditingController = TextEditingController();
   ItemSelect? _selectTeacher;
+  late TeachersBloc? teachersBloc;
 
   late bool _errorName = false;
   late bool _errorTeacher = false;
@@ -39,6 +44,13 @@ class _NewCourseScreenState extends State<NewCourseScreen> {
     setState(() {});
 
     if (band) return;
+
+    final course = Course()
+      ..name = _nameTextEditingController.text
+      ..teacher.value = teachersBloc!.state.selectedTeacher;
+    //..teacher = _selectTeacher!.value;
+
+    context.read<CoursesBloc>().add(SaveCourse(course: course));
   }
 
   @override
@@ -50,6 +62,7 @@ class _NewCourseScreenState extends State<NewCourseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    teachersBloc = context.read<TeachersBloc>();
     return Scaffold(
       body: ContentWidget(
         header: const HeaderWidget(
@@ -72,8 +85,9 @@ class _NewCourseScreenState extends State<NewCourseScreen> {
                   setState(() {
                     _selectTeacher = value;
                   });
+                  teachersBloc!.add(GetTeacherById(id: value.value!));
                 },
-                listItemSelect: []
+                listItemSelect: teachersBloc!.state.listTeachers
                     .map((teacher) => ItemSelect(
                         value: teacher.id,
                         label: '${teacher.name} ${teacher.lastName}'))

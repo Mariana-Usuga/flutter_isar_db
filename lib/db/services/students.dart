@@ -2,31 +2,23 @@ import 'package:flutter_isar_db/db/entities/entities.dart';
 import 'package:flutter_isar_db/db/isar.dart';
 import 'package:isar/isar.dart';
 
-class TeacherService {
+class StudentServices {
   late Future<Isar> db;
 
-  TeacherService() {
+  StudentServices() {
     db = IsarService().db;
   }
 
-  Future<List<Teacher>> getAllTeachers() async {
+  Future<List<Student>> getAllStudents() async {
     final isar = await db;
-
-    return await isar.teachers.where().findAll();
+    return await isar.students.where().findAll();
   }
 
-  Future<Teacher?> getTeacherById(int id) async {
-    final isar = await db;
-
-    return await isar.teachers.get(id);
-  }
-
-  Future<bool> saveTeacher(Teacher newTeacher) async {
+  Future<bool> saveStudent(Student newStudent) async {
     try {
       final isar = await db;
-
       await isar.writeTxn(() async {
-        await isar.teachers.put(newTeacher);
+        await isar.students.put(newStudent);
       });
       return true;
     } on IsarError catch (error) {

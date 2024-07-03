@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_isar_db/blocs/blocs.dart';
+import 'package:flutter_isar_db/blocs/students_bloc/students_bloc.dart';
 import 'package:flutter_isar_db/presentation/screens/screens.dart';
 
 class MyApp extends StatelessWidget {
@@ -13,6 +14,12 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => TeachersBloc(),
+        ),
+        BlocProvider(
+          create: (context) => CoursesBloc(),
+        ),
+        BlocProvider(
+          create: (context) => StudentsBloc(),
         )
       ],
       child: MaterialApp(
@@ -29,6 +36,7 @@ class MyApp extends StatelessWidget {
           HomeScreen.routeName: (_) => const HomeScreen(),
           NewTeacherScreen.routeName: (_) => const NewTeacherScreen(),
           NewCourseScreen.routeName: (_) => const NewCourseScreen(),
+          
         },
       ),
     );

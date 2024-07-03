@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_isar_db/db/entities/course.dart';
+import 'package:flutter_isar_db/db/entities/student.dart';
 import 'package:flutter_isar_db/presentation/screens/students/detail/widgets/bottom_sheet.dart';
 import 'package:flutter_isar_db/presentation/widgets/widgets.dart';
 
 class StudentDetailScreen extends StatelessWidget {
-  const StudentDetailScreen({super.key});
+  final Student student;
+  const StudentDetailScreen({required this.student, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +18,7 @@ class StudentDetailScreen extends StatelessWidget {
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _infoCourse(context),
+            _infoCourse(context, student),
             const SizedBox(height: 20.0),
             Text(
               'Lista de Cursos',
@@ -25,6 +28,15 @@ class StudentDetailScreen extends StatelessWidget {
               ),
             ),
             Expanded(
+                child: ListView.separated(
+              itemBuilder: (context, index) {
+                final Course courses = student.courses.elementAt(index);
+                return ListTile(title: Text(courses.name!));
+              },
+              separatorBuilder: (context, index) => const Divider(),
+              itemCount: student.courses.length,
+            ))
+            /*Expanded(
               child: ListView.separated(
                 itemCount: 2,
                 itemBuilder: (context, index) {
@@ -32,7 +44,7 @@ class StudentDetailScreen extends StatelessWidget {
                 },
                 separatorBuilder: (context, index) => const Divider(),
               ),
-            )
+            )*/
           ],
         ),
       ),
@@ -45,7 +57,7 @@ class StudentDetailScreen extends StatelessWidget {
     );
   }
 
-  Container _infoCourse(BuildContext context) {
+  Container _infoCourse(BuildContext context, Student student) {
     return Container(
       padding: const EdgeInsets.all(15.0),
       decoration: BoxDecoration(
@@ -68,7 +80,7 @@ class StudentDetailScreen extends StatelessWidget {
               const SizedBox(height: 10.0),
               RichText(
                 text: TextSpan(
-                  text: 'Nombre: Alumno Apellido',
+                  text: 'Nombre: ${student.name} ${student.lastName}',
                   style: TextStyle(
                       color: Theme.of(context).primaryColor,
                       fontSize: 20.0,

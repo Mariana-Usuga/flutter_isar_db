@@ -21,6 +21,7 @@ class IsarService {
         ],
         directory: dir.path,
         inspector: true,
+        maxSizeMiB: 512,
       );
     }
 

@@ -16,3 +16,9 @@ class SaveTeacher extends TeachersEvent {
 
   const SaveTeacher({required this.teacher});
 }
+
+class GetTeacherById extends TeachersEvent {
+  final int id;
+
+  const GetTeacherById({required this.id});
+}

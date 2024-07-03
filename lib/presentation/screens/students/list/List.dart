@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_isar_db/blocs/students_bloc/students_bloc.dart';
+import 'package:flutter_isar_db/db/entities/entities.dart';
 import 'package:flutter_isar_db/presentation/screens/students/detail/index.dart';
 import 'package:flutter_isar_db/presentation/screens/students/new/New.dart';
 
@@ -14,6 +17,7 @@ class ListStudentsScreen extends StatefulWidget {
 class _ListStudentsScreenState extends State<ListStudentsScreen> {
   @override
   void initState() {
+    context.read<StudentsBloc>().add(GetAllStudents());
     super.initState();
   }
 
@@ -32,13 +36,19 @@ class _ListStudentsScreenState extends State<ListStudentsScreen> {
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              itemBuilder: (context, index) {
-                return _item();
-              },
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: 2,
-            ),
+            child: BlocBuilder<StudentsBloc, StudentsState>(
+                builder: (context, state) {
+              return state.listStudents.isEmpty
+                  ? const Center(child: Text('No hay registros'))
+                  : ListView.separated(
+                      itemBuilder: (context, index) {
+                        final student = state.listStudents[index];
+                        return _item(student);
+                      },
+                      separatorBuilder: (context, index) => const Divider(),
+                      itemCount: state.listStudents.length,
+                    );
+            }),
           )
         ],
       ),
@@ -58,13 +68,13 @@ class _ListStudentsScreenState extends State<ListStudentsScreen> {
     );
   }
 
-  Widget _item() {
+  Widget _item(Student student) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const StudentDetailScreen(),
+            builder: (context) => StudentDetailScreen(student: student),
           ),
         );
       },
@@ -90,7 +100,7 @@ class _ListStudentsScreenState extends State<ListStudentsScreen> {
                 const SizedBox(height: 10.0),
                 RichText(
                   text: TextSpan(
-                    text: 'Nombre: Alumno Apellido',
+                    text: 'Nombre: ${student.name}',
                     style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontSize: 20.0,

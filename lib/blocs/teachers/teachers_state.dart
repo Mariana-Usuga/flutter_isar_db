@@ -5,12 +5,14 @@ class TeachersState extends Equatable {
   final String error;
   final bool add;
   final List<Teacher> listTeachers;
+  final Teacher? selectedTeacher;
 
   const TeachersState({
     this.loading = false,
     this.error = '',
     this.add = false,
     this.listTeachers = const [],
+    this.selectedTeacher,
   });
 
   TeachersState copyWith({
@@ -18,12 +20,14 @@ class TeachersState extends Equatable {
     String? error,
     bool? add,
     List<Teacher>? listTeachers,
+    Teacher? selectedTeacher,
   }) =>
       TeachersState(
         loading: loading ?? this.loading,
         error: error ?? this.error,
         add: add ?? this.add,
         listTeachers: listTeachers ?? this.listTeachers,
+        selectedTeacher: selectedTeacher ?? this.selectedTeacher,
       );
 
   @override

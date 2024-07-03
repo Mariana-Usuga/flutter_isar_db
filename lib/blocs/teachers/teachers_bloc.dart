@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_isar_db/db/entities/entities.dart';
 import 'package:flutter_isar_db/db/services/teachers.dart';
+import 'package:select_modal_flutter/src/models/item_select.dart';
 
 part 'teachers_event.dart';
 part 'teachers_state.dart';
@@ -18,6 +19,13 @@ class TeachersBloc extends Bloc<TeachersEvent, TeachersState> {
 
       final resp = await teacherService.getAllTeachers();
       emit(state.copyWith(loading: false, listTeachers: resp));
+    }));
+
+    on<GetTeacherById>(((event, emit) async {
+      emit(state.copyWith(loading: true));
+
+      final resp = await teacherService.getTeacherById(event.id);
+      emit(state.copyWith(loading: false, selectedTeacher: resp));
     }));
 
     on<SaveTeacher>(((event, emit) async {

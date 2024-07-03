@@ -11,6 +11,13 @@ class CourseServices {
 
   Future<List<Course>> getAllCourses() async {
     final isar = await db;
+    print('isar ${isar.courses.where().findAll()}');
+    return await isar.courses.where().findAll();
+  }
+
+  Future<List<Course>> getAllCoursesByStudent() async {
+    final isar = await db;
+    print('isar ${isar.courses.where().findAll()}');
     return await isar.courses.where().findAll();
   }
 
@@ -19,7 +26,7 @@ class CourseServices {
       final isar = await db;
       await isar.writeTxn(() async {
         await isar.courses.put(newCourse);
-        await newCourse.teacher.save();
+        //await newCourse.teacher.save();
       });
       return true;
     } on IsarError catch (error) {

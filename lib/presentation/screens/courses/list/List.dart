@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_isar_db/blocs/courses/courses_bloc.dart';
+import 'package:flutter_isar_db/db/entities/course.dart';
 import 'package:flutter_isar_db/presentation/screens/courses/detail/Detail.dart';
 import 'package:flutter_isar_db/presentation/screens/screens.dart';
 
@@ -14,6 +17,8 @@ class ListCoursesScreen extends StatefulWidget {
 class _ListCoursesScreenState extends State<ListCoursesScreen> {
   @override
   void initState() {
+    context.read<CoursesBloc>().add(GetAllCourses());
+
     super.initState();
   }
 
@@ -32,13 +37,19 @@ class _ListCoursesScreenState extends State<ListCoursesScreen> {
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              itemBuilder: (context, index) {
-                return _item();
-              },
-              separatorBuilder: (context, index) => const Divider(),
-              itemCount: 3,
-            ),
+            child: BlocBuilder<CoursesBloc, CoursesState>(
+                builder: (context, state) {
+              return state.listCourses.isEmpty
+                  ? const Center(child: Text('No hay registros'))
+                  : ListView.separated(
+                      itemBuilder: (context, index) {
+                        final course = state.listCourses[index];
+                        return _item(course);
+                      },
+                      separatorBuilder: (context, index) => const Divider(),
+                      itemCount: state.listCourses.length,
+                    );
+            }),
           )
         ],
       ),
@@ -52,13 +63,13 @@ class _ListCoursesScreenState extends State<ListCoursesScreen> {
     );
   }
 
-  Widget _item() {
+  Widget _item(Course course) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const CourseDetailScreen(),
+            builder: (context) => CourseDetailScreen(course: course),
           ),
         );
       },
@@ -85,9 +96,9 @@ class _ListCoursesScreenState extends State<ListCoursesScreen> {
                   text: TextSpan(
                     text: 'Profesor: ',
                     style: TextStyle(color: Theme.of(context).primaryColor),
-                    children: const [
+                    children: [
                       TextSpan(
-                        text: 'Profesor Apellido',
+                        text: '${course.teacher.value}',
                         style: TextStyle(
                           color: Colors.grey,
                         ),
@@ -98,7 +109,7 @@ class _ListCoursesScreenState extends State<ListCoursesScreen> {
                 const SizedBox(height: 10.0),
                 RichText(
                   text: TextSpan(
-                    text: 'Curso: Curso',
+                    text: 'Curso: ${course.name}',
                     style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontSize: 20.0,

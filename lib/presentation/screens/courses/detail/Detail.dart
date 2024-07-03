@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_isar_db/db/entities/course.dart';
+import 'package:flutter_isar_db/db/entities/entities.dart';
 import 'package:flutter_isar_db/presentation/widgets/widgets.dart';
 
 class CourseDetailScreen extends StatelessWidget {
-  const CourseDetailScreen({Key? key}) : super(key: key);
+  final Course course;
+  const CourseDetailScreen({required this.course, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,7 @@ class CourseDetailScreen extends StatelessWidget {
         content: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _infoCourse(context),
+            _infoCourse(context, course),
             const SizedBox(height: 20.0),
             Text(
               'Lista de Alumnos',
@@ -24,6 +27,15 @@ class CourseDetailScreen extends StatelessWidget {
               ),
             ),
             Expanded(
+                child: ListView.separated(
+              itemBuilder: (context, index) {
+                final Student cours = course.students.elementAt(index);
+                return ListTile(title: Text(cours.name!));
+              },
+              separatorBuilder: (context, index) => const Divider(),
+              itemCount: course.students.length,
+            ))
+            /*Expanded(
               child: ListView.separated(
                 itemCount: 2,
                 itemBuilder: (context, index) {
@@ -33,14 +45,14 @@ class CourseDetailScreen extends StatelessWidget {
                 },
                 separatorBuilder: (context, index) => const Divider(),
               ),
-            )
+            )*/
           ],
         ),
       ),
     );
   }
 
-  Container _infoCourse(BuildContext context) {
+  Container _infoCourse(BuildContext context, Course course) {
     return Container(
       padding: const EdgeInsets.all(15.0),
       decoration: BoxDecoration(
@@ -62,22 +74,16 @@ class CourseDetailScreen extends StatelessWidget {
             children: [
               RichText(
                 text: TextSpan(
-                  text: 'Profesor: ',
+                  text:
+                      'Profesor: ${course.teacher.value!.name} ${course.teacher.value!.lastName}',
                   style: TextStyle(color: Theme.of(context).primaryColor),
-                  children: const [
-                    TextSpan(
-                      text: 'Profesor Apellido',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
+                  children: [],
                 ),
               ),
               const SizedBox(height: 10.0),
               RichText(
                 text: TextSpan(
-                  text: 'Curso: Curso',
+                  text: 'Curso: ${course.name}',
                   style: TextStyle(
                       color: Theme.of(context).primaryColor,
                       fontSize: 20.0,
